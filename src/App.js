@@ -17,15 +17,17 @@ function App() {
     onSnapshot(chatref, docSnap => {
       let messages = []
       docSnap.forEach(doc => {
+        console.log(doc.data(),'doc.data())')
         messages.push(doc.data())
       })
-      setChats(messages)
+      setChats([...messages])
       setMsg("")
     })
   }, [])
 
+  console.log("chsts",chats)
   const search = () => {
-    setShow(true)
+    setShow(true) 
   }
 
   const sendimg = (e) => {
@@ -70,7 +72,8 @@ function App() {
     }
     else {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
-        name, message: msg
+        name, message: msg, time : new Date().getTime()
+        
       });
       console.log("Document written with ID: ", docRef.id)
     }
@@ -102,6 +105,8 @@ function App() {
     setMsg(e.target.value)
   }
 
+  let newChat = chats.sort((a,b) => a.time - b.time)
+
   return (
     <div>
       {name ? null :
@@ -113,6 +118,7 @@ function App() {
               placeholder="enter name to chat..."
               onBlur={e => setName(e.target.value)}
             />
+            
             <div className='input-group-append'>
               <button onClick={search}
                 className="btn btn-outline-secondary"
