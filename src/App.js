@@ -2,29 +2,26 @@ import { useEffect, useState } from 'react';
 import '../src/App.css';
 import { storage } from "./firebase";
 import { ref as ref_storage, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { dbstore } from './firebase';
 
 function App() {
-  const [name, setName] = useState("tany");
+  const [name, setName] = useState("");
   const [chats, setChats] = useState([]);
   const [msg, setMsg] = useState('');
   const [setShow] = useState(false)
   const [file, setFile] = useState("")
 
   useEffect(() => {
-    const fetch = async () => {
-      const chatref = collection(dbstore, "chatuser")
-      const docsnap = await getDocs(chatref)
-      docsnap.forEach(doc => {
-        console.log(doc.data())
+    const chatref = collection(dbstore, "chatuser")
+    onSnapshot(chatref, docSnap => {
+      docSnap.forEach(doc => {
+        console.log("data", doc.data())
         setChats(chats => [...chats, doc.data()])
         setMsg("")
       })
-    }
-    fetch()
+    })
   }, [])
-
 
   const search = () => {
     setShow(true)
@@ -125,7 +122,6 @@ function App() {
               </div>
 
               <div className='right'>
-
                 <label className='label' htmlFor='file'>choose</label>
                 <input
                   style={{ display: "none" }}
