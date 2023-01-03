@@ -9,8 +9,8 @@ function App() {
   const [name, setName] = useState("");
   const [chats, setChats] = useState([]);
   const [msg, setMsg] = useState('');
-  const [setShow] = useState(false)
-  const [file, setFile] = useState("")
+  const [setShow] = useState(false);
+  const [file, setFile] = useState("");
 
   useEffect(() => {
     const chatref = collection(dbstore, "chatuser")
@@ -64,6 +64,9 @@ function App() {
       });
       console.log("Document written with ID: ", docRef.id);
     }
+    else if (!msg) {
+      alert("type msg!!")
+    }
     else {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
         name, message: msg
@@ -110,14 +113,14 @@ function App() {
             </div>
           )}
           <div className='container'>
-            <div class="input-group mb-3 container btm">
+            <div className="input-group mb-3 container btm">
               <input type="text"
                 className="form-control"
                 placeholder="Type message"
                 onChange={msgHandle}
                 value={msg} />
 
-              <div class="input-group-append">
+              <div className="input-group-append">
                 <button onClick={e => sendChat()} className="btn btn-outline-secondary" type="button">send</button>
               </div>
 
@@ -135,7 +138,8 @@ function App() {
           </div>
         </div>
       </div>
-        : null}
+        : null
+      }
     </div>
   );
 }
