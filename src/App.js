@@ -12,12 +12,18 @@ function App() {
   const [setShow] = useState(false);
   const [file, setFile] = useState("");
 
+  let time = new Date()
+  let hr = time.getHours()
+  let min = time.getMinutes()
+  let date = time.toLocaleDateString()
+  console.log(`${hr}:${min}`)
+
   useEffect(() => {
     const chatref = collection(dbstore, "chatuser")
     onSnapshot(chatref, docSnap => {
       let messages = []
       docSnap.forEach(doc => {
-        console.log(doc.data(),'doc.data())')
+        console.log(doc.data(), 'doc.data())')
         messages.push(doc.data())
       })
       setChats([...messages])
@@ -25,9 +31,9 @@ function App() {
     })
   }, [])
 
-  console.log("chsts",chats)
+  console.log("chsts", chats)
   const search = () => {
-    setShow(true) 
+    setShow(true)
   }
 
   const sendimg = (e) => {
@@ -53,7 +59,7 @@ function App() {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           console.log(url)
           const docRef = addDoc(collection(dbstore, "chatuser"), {
-            name, url: url
+            name, url: url, time: `${hr}:${min}`
           }); console.log("Document written with ID: ", docRef.id);
         });
       }
@@ -63,41 +69,25 @@ function App() {
   const sendChat = async (e) => {
     if (msg.includes(".jpg")) {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
-        name, img: msg
+        name, img: msg, time: `${hr}:${min}`
       });
       console.log("Document written with ID: ", docRef.id);
     }
     else if (!msg) {
-      alert("type msg!!")
+    console.log("type msg.....!")
     }
     else {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
-        name, message: msg, time : new Date().getTime()
-        
+        name, message: msg, time: `${hr}:${min}`
+
       });
       console.log("Document written with ID: ", docRef.id)
     }
   }
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter'){
+    if (event.key === 'Enter') {
       sendChat()
-      // if (msg.includes(".jpg")) {
-      //   const docRef =  addDoc(collection(dbstore, "chatuser"), {
-      //     name, img: msg
-      //   });
-      //   // console.log("Document written with ID: ", docRef.id);
-      // }
-      // else if (!msg) {
-      //   alert("type msg!!")
-      // }
-      // else {
-      //   const docRef =  addDoc(collection(dbstore, "chatuser"), {
-      //     name, message: msg
-      //   });
-      //   // console.log("Document written with ID: ", docRef.id)
-      // }
-
     }
   }
 
@@ -105,7 +95,7 @@ function App() {
     setMsg(e.target.value)
   }
 
-  let newChat = chats.sort((a,b) => a.time - b.time)
+  chats.sort((a, b) => a.time - b.time)
 
   return (
     <div>
@@ -118,7 +108,7 @@ function App() {
               placeholder="enter name to chat..."
               onBlur={e => setName(e.target.value)}
             />
-            
+
             <div className='input-group-append'>
               <button onClick={search}
                 className="btn btn-outline-secondary"
@@ -126,52 +116,59 @@ function App() {
             </div></div>
         </div>
       }
-      {name ? 
-      <div className='full-box'>
-        <div className='full'>
-        <h1 className=' text-center'>User: {name}</h1>
-        <div className='chat-container'>
-          <div className='box'>
-          {chats.map((c, i) =>
-            <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
-              <p className='chatbox'>
-                <strong>{c.name} : </strong>
-                <span>{c.message}</span>
-                <img className='img' src={c.img}></img>
-                <img className='img'
-                  src={c.url}></img>
-              </p>
-              </div>
-          )} </div>
-          <div className='container'>
-            <div className="input-group mb-3 container btm">
-              <input type="text"
-                className="form-control"
-                placeholder="Type message"
-                onChange={msgHandle}
-                onKeyDown={handleKeyDown}
-                value={msg} />
+      {name ?
+        <div className='full-box'>
+          <div className='full'>
+            <h1 className=' text-center'>User: {name}</h1>
+            <div className='chat-container'>
+              <div className='box '>
+                <div className='text'>
+                <span>{date}</span>
+                {chats.map((c, i) =>
+                  <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
 
-              <div className="input-group-append">
-                <button onClick={e => sendChat()}
-            
-                className="btn btn-outline-secondary" type="button">send</button>
-              </div>
+                    <p className='chatbox'>
+                      <strong>{c.name} : </strong>
+                      <span>{c.message}</span>
+                      <img className='img' src={c.img}></img>
+                      <img className='img'
+                        src={c.url}></img>
+                      <span className='time'>{c.time} {`${hr >= 12 ? "PM" : "AM"}`}</span>
+                    </p>
+                  </div>
+                )} </div>
+              <div className='container'>
+                <div className="input-group mb-3 container btm">
+                  <input type="text"
+                    className="form-control"
+                    placeholder="Type message"
+                    onChange={msgHandle}
+                    onKeyDown={handleKeyDown}
+                    value={msg} />
 
-              <div className='right'>
-                <label className='label' htmlFor='file'>choose</label>
-                <input
-                  style={{ display: "none" }}
-                  type="file"
-                  id='file'
-                  onChange={sendimg}
-                />
-                <button onClick={handle}>upload</button>
+                  <div className="input-group-append">
+                    <button onClick={e => sendChat()}
+
+                      className="btn btn-outline-secondary" type="button">send</button>
+                  </div>
+
+                  <div className='right'>
+                    <label className='label' htmlFor='file'>choose</label>
+                    <input
+                      style={{ display: "none" }}
+                      type="file"
+                      id='file'
+                      onChange={sendimg}
+                    />
+                    <button onClick={handle}
+                    className="btn btn-outline-secondary"
+                    >upload</button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div></div>
+            </div>
+          </div></div>
         : null
       }
     </div>
