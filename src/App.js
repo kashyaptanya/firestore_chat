@@ -15,11 +15,12 @@ function App() {
   useEffect(() => {
     const chatref = collection(dbstore, "chatuser")
     onSnapshot(chatref, docSnap => {
+      let messages = []
       docSnap.forEach(doc => {
-        console.log("data", doc.data())
-        setChats(chats => [...chats, doc.data()])
-        setMsg("")
+        messages.push(doc.data())
       })
+      setChats(messages)
+      setMsg("")
     })
   }, [])
 
@@ -75,6 +76,28 @@ function App() {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter'){
+      sendChat()
+      // if (msg.includes(".jpg")) {
+      //   const docRef =  addDoc(collection(dbstore, "chatuser"), {
+      //     name, img: msg
+      //   });
+      //   // console.log("Document written with ID: ", docRef.id);
+      // }
+      // else if (!msg) {
+      //   alert("type msg!!")
+      // }
+      // else {
+      //   const docRef =  addDoc(collection(dbstore, "chatuser"), {
+      //     name, message: msg
+      //   });
+      //   // console.log("Document written with ID: ", docRef.id)
+      // }
+
+    }
+  }
+
   const msgHandle = (e) => {
     setMsg(e.target.value)
   }
@@ -97,9 +120,12 @@ function App() {
             </div></div>
         </div>
       }
-      {name ? <div>
+      {name ? 
+      <div className='full-box'>
+        <div className='full'>
         <h1 className=' text-center'>User: {name}</h1>
         <div className='chat-container'>
+          <div className='box'>
           {chats.map((c, i) =>
             <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
               <p className='chatbox'>
@@ -108,20 +134,22 @@ function App() {
                 <img className='img' src={c.img}></img>
                 <img className='img'
                   src={c.url}></img>
-
               </p>
-            </div>
-          )}
+              </div>
+          )} </div>
           <div className='container'>
             <div className="input-group mb-3 container btm">
               <input type="text"
                 className="form-control"
                 placeholder="Type message"
                 onChange={msgHandle}
+                onKeyDown={handleKeyDown}
                 value={msg} />
 
               <div className="input-group-append">
-                <button onClick={e => sendChat()} className="btn btn-outline-secondary" type="button">send</button>
+                <button onClick={e => sendChat()}
+            
+                className="btn btn-outline-secondary" type="button">send</button>
               </div>
 
               <div className='right'>
@@ -137,7 +165,7 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </div></div>
         : null
       }
     </div>

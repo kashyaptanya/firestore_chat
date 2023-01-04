@@ -1,8 +1,9 @@
+
 .chatbox {
   border: 2px soild gray;
   margin: 5px 0;
   padding: 10px;
-  background-color: bisque;
+  background-color: rgb(245, 240, 235);
 }
 
 .me .chatbox {
@@ -30,4 +31,13 @@
 .label {
   border: 1px solid black;
   padding: 4px;
+}
+
+.box{
+  background-color: antiquewhite;
+  height: 79vh;
+  scroll-behavior: inherit;
+  /* margin: 0 80px; */
+  overflow-y: auto;
+
 }
