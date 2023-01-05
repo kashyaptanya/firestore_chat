@@ -36,12 +36,16 @@ function App() {
     setShow(true)
   }
 
+  //select_image-file
+
   const sendimg = (e) => {
     if (e.target.files[0]) {
       setFile(e.target.files[0])
     }
   }
 
+  // image_upload
+  
   const handle = () => {
     if (!file) {
       alert("Please upload an image first!");
@@ -66,6 +70,8 @@ function App() {
     );
   }
 
+  //send_message
+
   const sendChat = async (e) => {
     if (msg.includes(".jpg")) {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
@@ -74,7 +80,7 @@ function App() {
       console.log("Document written with ID: ", docRef.id);
     }
     else if (!msg) {
-    console.log("type msg.....!")
+      console.log("type msg.....!")
     }
     else {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
@@ -85,14 +91,12 @@ function App() {
     }
   }
 
+  // enter-key handle
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       sendChat()
     }
-  }
-
-  const msgHandle = (e) => {
-    setMsg(e.target.value)
   }
 
   chats.sort((a, b) => a.time - b.time)
@@ -123,52 +127,51 @@ function App() {
             <div className='chat-container'>
               <div className='box '>
                 <div className='text'>
-                <span>{date}</span>
-                {chats.map((c, i) =>
-                  <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
+                  <span>{date}</span>
+                  {chats.map((c, i) =>
+                    <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
 
-                    <p className='chatbox'>
-                      <strong>{c.name} : </strong>
-                      <span>{c.message}</span>
-                      <img className='img' src={c.img}></img>
-                      <img className='img'
-                        src={c.url}></img>
-                      <span className='time'>{c.time} {`${hr >= 12 ? "PM" : "AM"}`}</span>
-                    </p>
-                  </div>
-                )} </div>
-              <div className='container'>
-                <div className="input-group mb-3 container btm">
-                  <input type="text"
-                    className="form-control"
-                    placeholder="Type message"
-                    onChange={msgHandle}
-                    onKeyDown={handleKeyDown}
-                    value={msg} />
+                      <p className='chatbox'>
+                        <strong>{c.name} : </strong>
+                        <span>{c.message}</span>
+                        <img className='img' src={c.img}></img>
+                        <img className='img' src={c.url}></img>
+                        <span className='time'>{c.time} {`${hr >= 12 ? "PM" : "AM"}`}</span>
+                      </p>
+                    </div>
+                  )} </div>
+                <div className='container'>
+                  <div className="input-group mb-3 container btm">
+                    <input type="text"
+                      className="form-control"
+                      placeholder="Type message"
+                      onChange={e => setMsg(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      value={msg} />
 
-                  <div className="input-group-append">
-                    <button onClick={e => sendChat()}
+                    <div className="input-group-append">
+                      <button onClick={e => sendChat()}
+                        className="btn btn-outline-secondary" type="button">send</button>
+                    </div>
 
-                      className="btn btn-outline-secondary" type="button">send</button>
-                  </div>
-
-                  <div className='right'>
-                    <label className='label' htmlFor='file'>choose</label>
-                    <input
-                      style={{ display: "none" }}
-                      type="file"
-                      id='file'
-                      onChange={sendimg}
-                    />
-                    <button onClick={handle}
-                    className="btn btn-outline-secondary"
-                    >upload</button>
+                    <div className='right'>
+                      <label className='label' htmlFor='file'>choose</label>
+                      <input
+                        style={{ display: "none" }}
+                        type="file"
+                        id='file'
+                        onChange={sendimg}
+                      />
+                      <button onClick={handle}
+                        className="btn btn-outline-secondary"
+                      >upload</button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            </div>
-          </div></div>
+          </div>
+        </div>
         : null
       }
     </div>
