@@ -12,11 +12,11 @@ function App() {
   const [setShow] = useState(false);
   const [file, setFile] = useState("");
 
-  let time = new Date()
-  let hr = time.getHours()
-  let min = time.getMinutes()
-  let date = time.toLocaleDateString()
-  console.log(`${hr}:${min}`)
+  // let time = new Date().getTime()
+  // let hr = time.getHours()
+  // let min = time.getMinutes()
+  // let date = time.toLocaleDateString()
+  // console.log(`${hr}:${min}`)
 
   useEffect(() => {
     const chatref = collection(dbstore, "chatuser")
@@ -63,7 +63,7 @@ function App() {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           console.log(url)
           const docRef = addDoc(collection(dbstore, "chatuser"), {
-            name, url: url, time: `${hr}:${min}`
+            name, url: url, time: new Date().getTime()
           }); console.log("Document written with ID: ", docRef.id);
         });
       }
@@ -75,7 +75,7 @@ function App() {
   const sendChat = async (e) => {
     if (msg.includes(".jpg")) {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
-        name, img: msg, time: `${hr}:${min}`
+        name, img: msg, time: new Date().getTime()
       });
       console.log("Document written with ID: ", docRef.id);
     }
@@ -84,7 +84,7 @@ function App() {
     }
     else {
       const docRef = await addDoc(collection(dbstore, "chatuser"), {
-        name, message: msg, time: `${hr}:${min}`
+        name, message: msg, time: new Date().getTime()
 
       });
       console.log("Document written with ID: ", docRef.id)
@@ -127,7 +127,6 @@ function App() {
             <div className='chat-container'>
               <div className='box '>
                 <div className='text'>
-                  <span>{date}</span>
                   {chats.map((c, i) =>
                     <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
 
@@ -136,7 +135,7 @@ function App() {
                         <span>{c.message}</span>
                         <img className='img' src={c.img}></img>
                         <img className='img' src={c.url}></img>
-                        <span className='time'>{c.time} {`${hr >= 12 ? "PM" : "AM"}`}</span>
+                        <span className='time'>{new Date(c.time).getHours()}:{new Date(c.time).getMinutes()} </span>
                       </p>
                     </div>
                   )} </div>
