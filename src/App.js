@@ -4,6 +4,7 @@ import { storage } from "./firebase";
 import { ref as ref_storage, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { dbstore } from './firebase';
+import dayjs from 'dayjs';
 
 function App() {
   const [name, setName] = useState("");
@@ -11,12 +12,6 @@ function App() {
   const [msg, setMsg] = useState('');
   const [setShow] = useState(false);
   const [file, setFile] = useState("");
-
-  // let time = new Date().getTime()
-  // let hr = time.getHours()
-  // let min = time.getMinutes()
-  // let date = time.toLocaleDateString()
-  // console.log(`${hr}:${min}`)
 
   useEffect(() => {
     const chatref = collection(dbstore, "chatuser")
@@ -31,7 +26,7 @@ function App() {
     })
   }, [])
 
-  console.log("chsts", chats)
+  console.log("chats", chats)
   const search = () => {
     setShow(true)
   }
@@ -51,23 +46,24 @@ function App() {
       alert("Please upload an image first!");
       return false
     }
-    const storageRef = ref_storage(storage, `/files/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-      },
-      (err) => console.log(err),
-      () => {
-
-        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          console.log(url)
-          const docRef = addDoc(collection(dbstore, "chatuser"), {
-            name, url: url, time: new Date().getTime()
-          }); console.log("Document written with ID: ", docRef.id);
-        });
-      }
-    );
+    else{
+      const storageRef = ref_storage(storage, `/files/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+        },
+        (err) => console.log(err),
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+            console.log(url)
+            const docRef = addDoc(collection(dbstore, "chatuser"), {
+              name, url: url, time: new Date().getTime()
+            }); console.log("Document written with ID: ", docRef.id);
+          });
+        }
+      );
+    }
   }
 
   //send_message
@@ -95,7 +91,7 @@ function App() {
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      sendChat()
+      sendChat();
     }
   }
 
@@ -112,7 +108,6 @@ function App() {
               placeholder="enter name to chat..."
               onBlur={e => setName(e.target.value)}
             />
-
             <div className='input-group-append'>
               <button onClick={search}
                 className="btn btn-outline-secondary"
@@ -129,13 +124,13 @@ function App() {
                 <div className='text'>
                   {chats.map((c, i) =>
                     <div key={i} className={`container ${c.name === name ? 'me' : ""}`}>
-
                       <p className='chatbox'>
                         <strong>{c.name} : </strong>
                         <span>{c.message}</span>
                         <img className='img' src={c.img}></img>
                         <img className='img' src={c.url}></img>
-                        <span className='time'>{new Date(c.time).getHours()}:{new Date(c.time).getMinutes()} </span>
+                        {/* <span className='time'>{Date(c.time).getHours()}:{new Date(c.time).getMinutes()} {new Date(c.time).getHours()>=12 ? 'PM' : 'AM'} </span> */}
+                        <span className='time'>{dayjs(c.time).format("hh:mm")} {dayjs(c.time).format("hh:mm")>=12 ? "AM" : "PM" }</span>
                       </p>
                     </div>
                   )} </div>
